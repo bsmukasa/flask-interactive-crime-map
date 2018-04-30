@@ -35,12 +35,19 @@ def submit_crime():
         error_message = None
         category = request.form.get("category")
         if category not in categories:
-            return home("Invalid category.")
+            return home("Invalid category")
         date = format_date(request.form.get("date"))
         if not date:
-            return home("Invalid date. Please use yyyy-mm-dd format")
-        latitude = float(request.form.get("latitude"))
-        longitude = float(request.form.get("longitude"))
+            error_message = "Invalid date. Please use yyyy-mm-dd format"
+            return home(error_message=error_message)
+
+        try:
+            latitude = float(request.form.get("latitude"))
+            longitude = float(request.form.get("longitude"))
+        except ValueError:
+            error_message = "Latitude or Longitude have incorrect format"
+            return home(error_message=error_message)
+
         description = request.form.get("description")
         DB.add_crime(category, date, latitude, longitude, description)
         return home(error_message=error_message)
