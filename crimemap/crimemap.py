@@ -9,12 +9,14 @@ from dbhelper import DBHelper
 app = Flask(__name__)
 DB = DBHelper()
 
+categories = ['mugging', 'break-in']
+
 
 @app.route("/")
 def home(error_message=None):
     crimes = DB.get_all_crimes()
     crimes = json.dumps(crimes)
-    return render_template("home.html", crimes=crimes, error_message=error_message)
+    return render_template("home.html", crimes=crimes, categories=categories, error_message=error_message)
 
 
 @app.route("/submitcrime", methods=["POST"])
