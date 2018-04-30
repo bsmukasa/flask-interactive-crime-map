@@ -1,5 +1,7 @@
+import datetime
 import json
 
+import dateparser
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -10,6 +12,14 @@ app = Flask(__name__)
 DB = DBHelper()
 
 categories = ['mugging', 'break-in']
+
+
+def format_date(user_data):
+    date = dateparser.parse(user_data)
+    try:
+        return datetime.datetime.strftime(date, "%Y-%m-%d")
+    except TypeError:
+        return None
 
 
 @app.route("/")
@@ -26,7 +36,9 @@ def submit_crime():
         category = request.form.get("category")
         if category not in categories:
             return home("Invalid category.")
-        date = request.form.get("date")
+        date = format_date(request.form.get("date"))
+        if not date:
+            return home("Invalid date. Please use yyyy-mm-dd format")
         latitude = float(request.form.get("latitude"))
         longitude = float(request.form.get("longitude"))
         description = request.form.get("description")
