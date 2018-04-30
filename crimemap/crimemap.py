@@ -24,6 +24,8 @@ def submit_crime():
     try:
         error_message = None
         category = request.form.get("category")
+        if category not in categories:
+            return home("Invalid category.")
         date = request.form.get("date")
         latitude = float(request.form.get("latitude"))
         longitude = float(request.form.get("longitude"))
