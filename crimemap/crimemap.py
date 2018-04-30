@@ -1,5 +1,6 @@
 import datetime
 import json
+import string
 
 import dateparser
 from flask import Flask
@@ -20,6 +21,11 @@ def format_date(user_data):
         return datetime.datetime.strftime(date, "%Y-%m-%d")
     except TypeError:
         return None
+
+
+def sanitize_string(user_input):
+    whitelist = string.letters + string.digits + " !?.,;:-'()&"
+    return filter(lambda x: x in whitelist, user_input)
 
 
 @app.route("/")
@@ -48,7 +54,7 @@ def submit_crime():
             error_message = "Latitude or Longitude have incorrect format"
             return home(error_message=error_message)
 
-        description = request.form.get("description")
+        description = sanitize_string(request.form.get("description"))
         DB.add_crime(category, date, latitude, longitude, description)
         return home(error_message=error_message)
     except Exception as e:
